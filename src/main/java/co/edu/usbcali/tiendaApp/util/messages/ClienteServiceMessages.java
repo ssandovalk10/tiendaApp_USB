@@ -2,6 +2,8 @@ package co.edu.usbcali.tiendaApp.util.messages;
 
 public class ClienteServiceMessages {
     public static final String ID_VALIDO_MSG = "Debe ingresar un id válido";
+
+    public static final String ID_REQUERIDO = "El ID es requerido";
     public static final String CLIENTE_NO_ENCONTRADO_POR_ID = "No se ha encontrado el cliente con Id %o";
     public static final String CLIENTE_NULO = "El cliente no puede ser nulo";
     public static final String NOMBRES_REQUERIDOS = "Los nombres son requeridos";

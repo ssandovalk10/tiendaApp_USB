@@ -2,12 +2,13 @@ package co.edu.usbcali.tiendaApp.service.impl;
 
 import co.edu.usbcali.tiendaApp.domain.Categoria;
 import co.edu.usbcali.tiendaApp.domain.Producto;
-import co.edu.usbcali.tiendaApp.dto.ProductoDTO;
-import co.edu.usbcali.tiendaApp.exceptions.ProductoException;
 import co.edu.usbcali.tiendaApp.mapper.ProductoMapper;
 import co.edu.usbcali.tiendaApp.repository.ProductoRepository;
+import co.edu.usbcali.tiendaApp.request.ActualizarProductoRequest;
 import co.edu.usbcali.tiendaApp.request.CrearProductoRequest;
+import co.edu.usbcali.tiendaApp.response.ActualizarProductoResponse;
 import co.edu.usbcali.tiendaApp.response.CrearProductoResponse;
+import co.edu.usbcali.tiendaApp.response.ListarProductosResponse;
 import co.edu.usbcali.tiendaApp.service.CategoriaService;
 import co.edu.usbcali.tiendaApp.service.ProductoService;
 import co.edu.usbcali.tiendaApp.util.ValidationsUtility;
@@ -27,6 +28,11 @@ public class ProductoServiceImpl implements ProductoService {
         this.categoriaService = categoriaService;
     }
 
+
+    @Override
+    public List<ListarProductosResponse> obtenerTodos() {
+        return null;
+    }
 
     @Override
     public CrearProductoResponse guardarNuevo(CrearProductoRequest crearProductoRequest) throws Exception {
@@ -51,6 +57,11 @@ public class ProductoServiceImpl implements ProductoService {
         // 1. Guarda el nuevo producto
         // 2. Mapea el producto al Response
         return ProductoMapper.crearDomainToResponse(productoRepository.save(producto));
+    }
+
+    @Override
+    public ActualizarProductoResponse actualizarProducto(ActualizarProductoRequest actualizarProductoRequest) throws Exception {
+        return null;
     }
 
 

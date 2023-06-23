@@ -7,8 +7,11 @@ import co.edu.usbcali.tiendaApp.exceptions.ClienteException;
 import co.edu.usbcali.tiendaApp.mapper.ClienteMapper;
 import co.edu.usbcali.tiendaApp.repository.ClienteRepository;
 import co.edu.usbcali.tiendaApp.repository.TipoDocumentoRepository;
+import co.edu.usbcali.tiendaApp.request.ActualizarClienteRequest;
 import co.edu.usbcali.tiendaApp.request.CrearClienteRequest;
+import co.edu.usbcali.tiendaApp.response.ActualizarClienteResponse;
 import co.edu.usbcali.tiendaApp.response.CrearClienteResponse;
+import co.edu.usbcali.tiendaApp.response.ListarClientesResponse;
 import co.edu.usbcali.tiendaApp.service.ClienteService;
 import co.edu.usbcali.tiendaApp.util.ValidationsUtility;
 import co.edu.usbcali.tiendaApp.util.messages.ClienteServiceMessages;
@@ -27,12 +30,9 @@ public class ClienteServiceImpl implements ClienteService {
         this.tipoDocumentoService = tipoDocumentoService;
     }
     @Override
-    public List<ClienteDTO> obtenerTodos() {
+    public List<ListarClientesResponse> obtenerTodos() {
 
-        return  ClienteMapper.domainToDtoList(clienteRepository.findAll());
-        /*List<Cliente> clientes = ClienteRepository.findAll();
-        List<ClienteDTO> clienteDTOS = ClienteMapper.domainToDtoList(clientes);
-        return clienteDTOS;*/
+        return  ClienteMapper.domainToResponseList(clienteRepository.findAll());
 
     }
 
@@ -44,57 +44,43 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteRepository.findById(id).map(ClienteMapper::domainToDto).orElseThrow(
                 () -> new ClienteException(String.format(ClienteServiceMessages.CLIENTE_NO_ENCONTRADO_POR_ID, id)));
 
-        /*
-        *
-        Cliente cliente = clienteRepository.getReferenceById(id);
-        if( cliente == null){
-            throw new Exception("No se ha encontrado el cliente con Id" + id);
-        }
-
-        ClienteDTO clienteDTO = ClienteMapper.domainToDto(cliente);
-
-        return clienteDTO;*/
-    }
-
-    @Override
-    public ClienteDTO guardar(ClienteDTO clienteDTO) throws Exception {
-        validarCliente(clienteDTO);
-        Cliente cliente = ClienteMapper.dtoToDomain(clienteDTO);
-        TipoDocumento tipoDocumento = tipoDocumentoService.buscarTipoDocumentoPorId(
-                clienteDTO.getTipoDocumentoId());
-        cliente.setTipoDocumento(tipoDocumento);
-
-        return ClienteMapper.domainToDto(clienteRepository.save(cliente));
     }
 
     public CrearClienteResponse crearCliente(CrearClienteRequest crearClienteRequest) throws Exception {
-        // Mapear cliente hacia el Domain
+
         Cliente cliente = ClienteMapper.crearRequestToDomain(crearClienteRequest);
 
-        // Buscar el tipo de documento (Domain)
         TipoDocumento tipoDocumento = tipoDocumentoService.buscarTipoDocumentoPorId(
                 crearClienteRequest.getTipoDocumentoId());
 
-        // Validar si ya existe un cliente con la llave Documento-TipoDocumento
         boolean existePorTipoYDocumento = clienteRepository.existsByTipoDocumentoIdAndDocumento(
                 crearClienteRequest.getTipoDocumentoId(), crearClienteRequest.getDocumento());
 
-        // Si el cliente ya existe por la llave Documento-TipoDocumento entonces lanza excepción
         if(existePorTipoYDocumento) throw new Exception(
                 String.format(ClienteServiceMessages.EXISTE_POR_TIPO_DOCUMENTO_Y_DOCUMENTO,
                         tipoDocumento.getDescripcion(), crearClienteRequest.getDocumento())
         );
 
-        // Hidratar el Tipo de Documento del cliente, dado que no fue mapeada
         cliente.setTipoDocumento(tipoDocumento);
-
-        // Guarda el nuevo cliente, retorna el Response a la capa Superior utilizando el Mapper.
         return ClienteMapper.crearDomainToResponse(clienteRepository.save(cliente));
     }
 
     @Override
-    public ClienteDTO actualizar(ClienteDTO clienteDTO) {
-        return null;
+    public ActualizarClienteResponse actualizarCliente(ActualizarClienteRequest actualizarClienteRequest) throws Exception {
+
+        TipoDocumento tipoDocumento = tipoDocumentoService.buscarTipoDocumentoPorId(
+                actualizarClienteRequest.getTipoDocumentoId());
+
+        Cliente clienteUpdate = clienteRepository.findById(actualizarClienteRequest.getId()).orElse(null);;
+        if (clienteUpdate != null) {
+            clienteUpdate.setNombres(actualizarClienteRequest.getNombres());
+            clienteUpdate.setApellidos(actualizarClienteRequest.getApellidos());
+            clienteUpdate.setEstado(actualizarClienteRequest.getEstado());
+            clienteUpdate.setDocumento(actualizarClienteRequest.getDocumento());
+            clienteUpdate.setTipoDocumento(tipoDocumento);
+        }
+
+        return ClienteMapper.actualizarClienteResponse(clienteRepository.save(clienteUpdate));
     }
 
     private void validarCliente(ClienteDTO clienteDTO) throws Exception {
