@@ -5,6 +5,8 @@ import co.edu.usbcali.tiendaApp.dto.CategoriaDTO;
 import co.edu.usbcali.tiendaApp.exceptions.CategoriaException;
 import co.edu.usbcali.tiendaApp.mapper.CategoriaMapper;
 import co.edu.usbcali.tiendaApp.repository.CategoriaRepository;
+import co.edu.usbcali.tiendaApp.request.CrearCategoriaRequest;
+import co.edu.usbcali.tiendaApp.response.CrearCategoriaResponse;
 import co.edu.usbcali.tiendaApp.service.CategoriaService;
 import co.edu.usbcali.tiendaApp.util.ValidationsUtility;
 import co.edu.usbcali.tiendaApp.util.messages.CategoriaServiceMessages;
@@ -91,6 +93,19 @@ public class CategoriaServiceImpl implements CategoriaService {
     public List<CategoriaDTO> buscarPorNombreLike(String nombre) throws Exception {
         ValidationsUtility.stringIsNullOrBlank(nombre, CategoriaServiceMessages.NOMBRE_REQUERIDO);
         return CategoriaMapper.domainToDtoList(categoriaRepository.findByNombreLikeIgnoreCase("%"+nombre+"%"));
+    }
+
+    @Override
+    public CrearCategoriaResponse crearCategoria(CrearCategoriaRequest crearCategoriaRequest) throws Exception {
+
+
+        boolean existePorNombre = categoriaRepository.existsByNombreIgnoreCase(crearCategoriaRequest.getNombre());
+
+        if (existePorNombre) throw new Exception(String.format(CategoriaServiceMessages.EXISTE_POR_NOMBRE,crearCategoriaRequest.getNombre()));
+
+        Categoria categoria = CategoriaMapper.crearRequestToDomain(crearCategoriaRequest);
+
+        return CategoriaMapper.crearDomainToResponse(categoriaRepository.save(categoria));
     }
 
     private void validarCategoria(CategoriaDTO categoriaDTO, boolean esGuardado) throws Exception {

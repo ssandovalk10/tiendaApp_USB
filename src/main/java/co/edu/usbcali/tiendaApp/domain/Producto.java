@@ -21,14 +21,19 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name="cate_id", referencedColumnName = "id")
     private Categoria categoria;
+
     @Column(length = 10, nullable = false)
     private String referencia;
+
     @Column(length = 50, nullable = false)
     private String nombre;
+
     @Column
     private String descripcion;
+
     @Column(name = "precio_unitario", length = 19, precision = 2)
     private BigDecimal precioUnitario;
+
     @Column(name="unidades_disponibles", length = 19, precision = 2)
     private BigDecimal unidadesDisponibles;
 

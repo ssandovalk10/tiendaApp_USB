@@ -54,4 +54,60 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
 
+    @Override
+    public List<ProductoDTO> buscarPorNombreLike(String nombre) throws Exception {
+      return null;
+    }
+
+    @Override
+    public Producto buscarPorId(Integer id) throws Exception {
+        ValidationsUtility.integerIsNullOrLessZero(id, ProductoServiceMessages.ID_VALIDO_MSG);
+        return productoRepository.findById(id).orElseThrow(
+                () -> new ProductoException
+                        (String.format(
+                                ProductoServiceMessages.PRODUCTO_NO_ENCONTRADA_POR_ID, id))
+
+        );
+    }
+
+    @Override
+    public List<ProductoDTO> obtenerTodos() {
+        return ProductoMapper.domainToDtoList(productoRepository.findAll());
+    }
+
+    @Override
+    public ProductoDTO actualizar(ProductoDTO productoDto) throws Exception {
+        validarProducto(productoDto, false);
+        Categoria categoria = categoriaService.buscarCategoriaPorId(productoDto.getCategoriaId());
+
+        boolean existePorNombreYOtroId = productoRepository.existsByNombreIgnoreCaseAndIdNot(productoDto.getNombre(),productoDto.getId());
+        boolean existePorReferenciaYOtroId = productoRepository.existsByReferenciaIgnoreCaseAndIdNot(productoDto.getReferencia(),productoDto.getId());
+
+        if (existePorNombreYOtroId) throw new Exception(String.format(ProductoServiceMessages.EXISTE_POR_NOMBRE,productoDto.getNombre()));
+        if (existePorReferenciaYOtroId) throw new Exception(String.format(ProductoServiceMessages.EXISTE_POR_REFERENCIA_EN_OTRO_PRODUTO));
+
+
+        Producto producto = buscarPorId(productoDto.getId());
+
+        producto.setNombre(productoDto.getNombre());
+        producto.setDescripcion(productoDto.getDescripcion());
+        producto.setReferencia(productoDto.getReferencia());
+        producto.setPrecioUnitario(productoDto.getPrecioUnitario());
+        producto.setUnidadesDisponibles(productoDto.getUnidadesDisponibles());
+        producto.setCategoria(categoria);
+
+        return ProductoMapper.domainToDto(productoRepository.save(producto));
+    }
+
+    private void validarProducto(ProductoDTO productoDto, boolean esGuardado) throws Exception {
+        if(!esGuardado) {
+            ValidationsUtility.isNull(productoDto.getId(), ProductoServiceMessages.ID_REQUERIDO);
+        }
+        ValidationsUtility.isNull(productoDto, ProductoServiceMessages.PRODUCTO_NULO);
+        ValidationsUtility.stringIsNullOrBlank(productoDto.getNombre(), ProductoServiceMessages.NOMBRE_REQUERIDO);
+        ValidationsUtility.stringIsNullOrBlank(productoDto.getReferencia(), ProductoServiceMessages.REFERENCIA_REQUERIDA);
+        ValidationsUtility.bigDecimalIsNullOrLessZero(productoDto.getPrecioUnitario(), ProductoServiceMessages.PRECIO_UNITARIO_REQUERIDO);
+        ValidationsUtility.bigDecimalIsNullOrLessZero(productoDto.getUnidadesDisponibles(), ProductoServiceMessages.UNIDADES_DISPONIBLES_REQUERIDO);
+    }
+
 }

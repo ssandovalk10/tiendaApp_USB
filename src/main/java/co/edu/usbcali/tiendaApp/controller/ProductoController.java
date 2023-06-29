@@ -1,5 +1,6 @@
 package co.edu.usbcali.tiendaApp.controller;
 
+import co.edu.usbcali.tiendaApp.domain.Producto;
 import co.edu.usbcali.tiendaApp.dto.ProductoDTO;
 import co.edu.usbcali.tiendaApp.request.CrearProductoRequest;
 import co.edu.usbcali.tiendaApp.response.CrearProductoResponse;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
+@RequestMapping("/producto")
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -20,9 +23,28 @@ public class ProductoController {
         this.productoService = productoService;
     }
 
-    @PostMapping("/nuevo")
+    @PostMapping("/nuevoProducto")
     CrearProductoResponse nuevoProducto(@RequestBody @Valid CrearProductoRequest crearProductoRequest) throws Exception {
         return productoService.guardarNuevo(crearProductoRequest);
+    }
+
+    @PutMapping("/actualizarProducto")
+    ResponseEntity<ProductoDTO> actualizarProducto(@RequestBody ProductoDTO productoDto ) throws Exception{
+        return new ResponseEntity<ProductoDTO>(productoService.actualizar(productoDto),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/buscarPorId/")
+    Producto buscarPorId(@RequestParam("id") Integer id) throws Exception {
+        return productoService.buscarPorId(id);
+    }
+
+    @GetMapping("/buscarTodos")
+    List<ProductoDTO> buscarTodos() {  return productoService.obtenerTodos(); }
+
+    @GetMapping(value = "/buscarPorNombre/")
+    List<ProductoDTO> buscarPorNombre(@RequestParam("nombre") String nombre) throws Exception {
+        return productoService.buscarPorNombreLike(nombre);
     }
 
 }
