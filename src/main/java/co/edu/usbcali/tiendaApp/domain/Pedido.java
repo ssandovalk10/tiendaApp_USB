@@ -22,7 +22,7 @@ public class Pedido {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "cli_id")
+    @JoinColumn(name = "clie_id")
     private Cliente cliente;
 
     @OneToOne

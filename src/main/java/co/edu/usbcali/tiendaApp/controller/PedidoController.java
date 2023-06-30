@@ -23,7 +23,7 @@ public class PedidoController {
 
 
     @GetMapping("/pedido/{id}")
-    ResponseEntity<PedidoDTO> buscarPorId(@PathVariable Integer id) throws Exception {
+    ResponseEntity<PedidoDTO> buscarPorId(@RequestParam Integer id) throws Exception {
         return new ResponseEntity<PedidoDTO>(pedidoService.buscarPorId(id),
                 HttpStatus.OK);
     }

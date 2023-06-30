@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="tipodocumento")
+@Table(name="tiposdocumento")
 public class TipoDocumento {
 
     @Id

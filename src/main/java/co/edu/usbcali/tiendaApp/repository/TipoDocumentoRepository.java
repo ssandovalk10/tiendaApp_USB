@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TipoDocumentoRepository extends JpaRepository<TipoDocumento, Integer> {
+
+    boolean existsByDescripcionIgnoreCase(String descripcion);
+    boolean existsByDescripcionIgnoreCaseAndIdNot(String descripcion, Integer id);
 }

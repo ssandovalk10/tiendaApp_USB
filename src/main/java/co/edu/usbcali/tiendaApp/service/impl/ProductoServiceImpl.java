@@ -4,6 +4,7 @@ import co.edu.usbcali.tiendaApp.domain.Categoria;
 import co.edu.usbcali.tiendaApp.domain.Producto;
 import co.edu.usbcali.tiendaApp.dto.ProductoDTO;
 import co.edu.usbcali.tiendaApp.exceptions.ProductoException;
+import co.edu.usbcali.tiendaApp.mapper.CategoriaMapper;
 import co.edu.usbcali.tiendaApp.mapper.ProductoMapper;
 import co.edu.usbcali.tiendaApp.repository.ProductoRepository;
 import co.edu.usbcali.tiendaApp.request.CrearProductoRequest;
@@ -11,6 +12,7 @@ import co.edu.usbcali.tiendaApp.response.CrearProductoResponse;
 import co.edu.usbcali.tiendaApp.service.CategoriaService;
 import co.edu.usbcali.tiendaApp.service.ProductoService;
 import co.edu.usbcali.tiendaApp.util.ValidationsUtility;
+import co.edu.usbcali.tiendaApp.util.messages.CategoriaServiceMessages;
 import co.edu.usbcali.tiendaApp.util.messages.ProductoServiceMessages;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +58,8 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public List<ProductoDTO> buscarPorNombreLike(String nombre) throws Exception {
-      return null;
+        ValidationsUtility.stringIsNullOrBlank(nombre, ProductoServiceMessages.NOMBRE_REQUERIDO);
+        return ProductoMapper.domainToDtoList(productoRepository.findByNombreLikeIgnoreCase("%"+nombre+"%"));
     }
 
     @Override
@@ -79,16 +82,10 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoDTO actualizar(ProductoDTO productoDto) throws Exception {
         validarProducto(productoDto, false);
         Categoria categoria = categoriaService.buscarCategoriaPorId(productoDto.getCategoriaId());
-
         boolean existePorNombreYOtroId = productoRepository.existsByNombreIgnoreCaseAndIdNot(productoDto.getNombre(),productoDto.getId());
-        boolean existePorReferenciaYOtroId = productoRepository.existsByReferenciaIgnoreCaseAndIdNot(productoDto.getReferencia(),productoDto.getId());
-
         if (existePorNombreYOtroId) throw new Exception(String.format(ProductoServiceMessages.EXISTE_POR_NOMBRE,productoDto.getNombre()));
-        if (existePorReferenciaYOtroId) throw new Exception(String.format(ProductoServiceMessages.EXISTE_POR_REFERENCIA_EN_OTRO_PRODUTO));
-
 
         Producto producto = buscarPorId(productoDto.getId());
-
         producto.setNombre(productoDto.getNombre());
         producto.setDescripcion(productoDto.getDescripcion());
         producto.setReferencia(productoDto.getReferencia());
