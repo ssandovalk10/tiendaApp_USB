@@ -1,10 +1,15 @@
 package co.edu.usbcali.tiendaApp.service.impl;
 
+import co.edu.usbcali.tiendaApp.domain.Cliente;
+import co.edu.usbcali.tiendaApp.domain.EstadoPedido;
 import co.edu.usbcali.tiendaApp.domain.Pedido;
+import co.edu.usbcali.tiendaApp.domain.TipoDocumento;
 import co.edu.usbcali.tiendaApp.dto.PedidoDTO;
 import co.edu.usbcali.tiendaApp.exceptions.PedidoException;
 import co.edu.usbcali.tiendaApp.mapper.PedidoMapper;
 import co.edu.usbcali.tiendaApp.repository.PedidoRepository;
+import co.edu.usbcali.tiendaApp.service.ClienteService;
+import co.edu.usbcali.tiendaApp.service.EstadoPedidoService;
 import co.edu.usbcali.tiendaApp.service.PedidoService;
 import co.edu.usbcali.tiendaApp.util.ValidationsUtility;
 import co.edu.usbcali.tiendaApp.util.messages.PedidoServiceMessages;
@@ -15,9 +20,13 @@ import java.util.List;
 @Service
 public class PedidoServiceImpl implements PedidoService {
     private final PedidoRepository pedidoRepository;
+    private final ClienteService clienteService;
+    private final EstadoPedidoService estadoPedidoService;
 
-    public PedidoServiceImpl(PedidoRepository pedidoRepository) {
+    public PedidoServiceImpl(PedidoRepository pedidoRepository, ClienteService clienteService, EstadoPedidoService estadoPedidoService) {
         this.pedidoRepository = pedidoRepository;
+        this.clienteService = clienteService;
+        this.estadoPedidoService = estadoPedidoService;
     }
 
     @Override
@@ -36,14 +45,31 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public PedidoDTO guardar(PedidoDTO pedidoDTO) throws Exception {
         validarPedido(pedidoDTO, true);
+
+        Cliente cliente = clienteService.buscarClientePorId(pedidoDTO.getClienteId());
+
+        EstadoPedido estadoPedido = estadoPedidoService.buscarPorId(pedidoDTO.getEstadoPedidoId());
+
         Pedido pedido = PedidoMapper.dtoToDomain(pedidoDTO);
+
+        pedido.setCliente(cliente);
+        pedido.setEstadoPedido(estadoPedido);
+
+
         return PedidoMapper.domainToDto(pedidoRepository.save(pedido));
     }
 
     @Override
     public PedidoDTO actualizar(PedidoDTO pedidoDTO) throws Exception {
         validarPedido(pedidoDTO, false);
+        Cliente cliente = clienteService.buscarClientePorId(pedidoDTO.getClienteId());
+
+        EstadoPedido estadoPedido = estadoPedidoService.buscarPorId(pedidoDTO.getEstadoPedidoId());
+
         Pedido pedido = PedidoMapper.dtoToDomain(pedidoDTO);
+        pedido.setCliente(cliente);
+        pedido.setEstadoPedido(estadoPedido);
+
         return PedidoMapper.domainToDto(pedidoRepository.save(pedido));
     }
 

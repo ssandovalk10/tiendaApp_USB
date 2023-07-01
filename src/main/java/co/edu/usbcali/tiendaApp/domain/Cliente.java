@@ -31,7 +31,7 @@ public class Cliente {
     private String estado;
 
     @ManyToOne
-    @JoinColumn(name = "tipo_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "tido_id", referencedColumnName = "id", nullable = false)
     private TipoDocumento tipoDocumento;
 
 

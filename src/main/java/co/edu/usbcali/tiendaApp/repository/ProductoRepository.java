@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     boolean existsByCategoriaIdAndReferencia(Integer categoriaId, String referencia);
-    boolean existsByReferenciaIgnoreCaseAndIdNot(String referencia, Integer id);
     boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Integer id);
     boolean existsById( Integer id);
     List<Producto> findByNombreLikeIgnoreCase(String nombre);

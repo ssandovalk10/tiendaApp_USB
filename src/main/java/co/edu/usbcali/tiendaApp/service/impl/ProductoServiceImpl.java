@@ -82,6 +82,7 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoDTO actualizar(ProductoDTO productoDto) throws Exception {
         validarProducto(productoDto, false);
         Categoria categoria = categoriaService.buscarCategoriaPorId(productoDto.getCategoriaId());
+
         boolean existePorNombreYOtroId = productoRepository.existsByNombreIgnoreCaseAndIdNot(productoDto.getNombre(),productoDto.getId());
         if (existePorNombreYOtroId) throw new Exception(String.format(ProductoServiceMessages.EXISTE_POR_NOMBRE,productoDto.getNombre()));
 
