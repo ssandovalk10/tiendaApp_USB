@@ -22,13 +22,12 @@ public class Pedido {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "clie_id")
+    @JoinColumn(name = "clie_id", referencedColumnName = "id")
     private Cliente cliente;
 
     @OneToOne
-    @JoinColumn(name = "espe_id")
+    @JoinColumn(name = "espe_id", referencedColumnName = "id")
     private EstadoPedido estadoPedido;
-
 
     @Column(nullable=false)
     private Instant fecha;

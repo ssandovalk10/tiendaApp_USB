@@ -11,6 +11,8 @@ public interface ProductoService {
     CrearProductoResponse guardarNuevo(CrearProductoRequest crearProductoRequest) throws Exception;
     List<ProductoDTO> obtenerTodos();
 
+    List<Producto> listarTodos();
+
     ProductoDTO actualizar(ProductoDTO productoDto) throws Exception;
 
     Producto buscarPorId(Integer id) throws Exception;

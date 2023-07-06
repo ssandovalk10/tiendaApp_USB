@@ -42,6 +42,14 @@ public class ProductoController {
     @GetMapping("/buscarTodos")
     List<ProductoDTO> buscarTodos() {  return productoService.obtenerTodos(); }
 
+    /**
+     * Este metodo listarTodos, muestra la informacion completa de la llave foranea asociada,
+     * en este caso mostrara toda la informacion de la categoria asociada al producto
+     * */
+
+    /*@GetMapping("/listarTodos")
+    List<Producto> listarTodos() { return  productoService.listarTodos(); }*/
+
     @GetMapping(value = "/buscarPorNombre/")
     List<ProductoDTO> buscarPorNombre(@RequestParam("nombre") String nombre) throws Exception {
         return productoService.buscarPorNombreLike(nombre);

@@ -22,11 +22,11 @@ public class DetallePedido {
     private Integer id ;
 
     @ManyToOne
-    @JoinColumn(name = "pedi_id",referencedColumnName = "id")
+    @JoinColumn(name = "pedi_id",referencedColumnName = "id", nullable = false)
     private Pedido pedido;
 
     @ManyToOne
-    @JoinColumn(name = "prod_id",referencedColumnName = "id")
+    @JoinColumn(name = "prod_id",referencedColumnName = "id", nullable = false)
     private Producto producto;
 
     @Column(length = 19,precision = 2, nullable =false)

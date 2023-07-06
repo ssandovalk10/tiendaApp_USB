@@ -79,6 +79,11 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    public List<Producto> listarTodos() {
+       return productoRepository.findAll();
+    }
+
+    @Override
     public ProductoDTO actualizar(ProductoDTO productoDto) throws Exception {
         validarProducto(productoDto, false);
         Categoria categoria = categoriaService.buscarCategoriaPorId(productoDto.getCategoriaId());

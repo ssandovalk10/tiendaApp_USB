@@ -1,9 +1,6 @@
 package co.edu.usbcali.tiendaApp.service.impl;
 
-import co.edu.usbcali.tiendaApp.domain.Cliente;
-import co.edu.usbcali.tiendaApp.domain.EstadoPedido;
-import co.edu.usbcali.tiendaApp.domain.Pedido;
-import co.edu.usbcali.tiendaApp.domain.TipoDocumento;
+import co.edu.usbcali.tiendaApp.domain.*;
 import co.edu.usbcali.tiendaApp.dto.PedidoDTO;
 import co.edu.usbcali.tiendaApp.exceptions.PedidoException;
 import co.edu.usbcali.tiendaApp.mapper.PedidoMapper;
@@ -35,12 +32,23 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public PedidoDTO buscarPorId(Integer id) throws Exception {
+    public List<Pedido> buscarPorClienteId(Integer id) {
+        return  pedidoRepository.findByClienteId(id);
+    }
+
+    @Override
+    public List<Pedido> buscarPorEstadoPedidoId(Integer id) {
+        return  pedidoRepository.findByEstadoPedidoId(id);
+    }
+
+    @Override
+    public Pedido buscarPorId(Integer id) throws Exception {
         ValidationsUtility.integerIsNullOrLessZero(id, PedidoServiceMessages.ID_VALIDO_MSG);
 
-        return pedidoRepository.findById(id).map(PedidoMapper::domainToDto).orElseThrow(
+        return pedidoRepository.findById(id).orElseThrow(
                 ()-> new PedidoException(String.format(PedidoServiceMessages.PEDIDO_NO_ENCONTRADO_POR_ID, id)));
     }
+
 
     @Override
     public PedidoDTO guardar(PedidoDTO pedidoDTO) throws Exception {

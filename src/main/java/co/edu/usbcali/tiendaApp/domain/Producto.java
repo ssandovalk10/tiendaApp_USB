@@ -18,6 +18,7 @@ public class Producto {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @ManyToOne
     @JoinColumn(name="cate_id", referencedColumnName = "id")
     private Categoria categoria;
